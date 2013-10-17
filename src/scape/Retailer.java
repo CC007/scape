@@ -56,7 +56,7 @@ public class Retailer extends Agent {
                         message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.sender().getProduct()));
                     }
                     break;
-                case BUY_PRODUCT:
+                case SELL_PRODUCT:
                     if (message.number() < getPrice(message.sender().getProduct())) {
                         buy(message.sender().getProduct());
                         message.sender().deliverMessage(new Message(this, Message.Content.AGREE, message.sender().getProduct()));
