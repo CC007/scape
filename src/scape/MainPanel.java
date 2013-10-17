@@ -90,10 +90,14 @@ public class MainPanel extends JPanel implements MouseInputListener {
     //Methods required by the MouseInputListener interface.
     public void mouseClicked(MouseEvent e) {
         labels[xSelected][ySelected].setBorder(BorderFactory.createLineBorder(Color.black));
-        xSelected = e.getX() / (650 / xSize);
-        ySelected = e.getY() / (650 / ySize);
-        labels[xSelected][ySelected].setBorder(BorderFactory.createLineBorder(Color.red));
-        scape.buttonPanel.addInfo(scape.grid[xSelected][ySelected]);
+        int xtemp = (e.getX() + 5) / (650 / xSize) - 1;
+        int ytemp = (e.getY() + 5) / (650 / ySize) - 1;
+        if (xtemp >= 0 && xtemp <=30 && ytemp >= 0 && ytemp <=30) {
+            xSelected = xtemp;
+            ySelected = ytemp;
+            labels[xSelected][ySelected].setBorder(BorderFactory.createLineBorder(Color.red));
+            scape.buttonPanel.addInfo(scape.grid[xSelected][ySelected]);
+        }
     }
 
     public void mouseMoved(MouseEvent e) {
