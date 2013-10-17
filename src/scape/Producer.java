@@ -65,9 +65,9 @@ public class Producer extends Agent {
                 default:
                     System.exit(1);
             }
-            messages.clear();
-            messageWaiting = false;
         }
+        messages.clear();
+        messageWaiting = false;
     }
 
     // Handling a sale, by decreasing stock and increasing the sellPrice.
