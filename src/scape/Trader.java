@@ -95,12 +95,20 @@ public class Trader extends Agent {
             Content content = message.content();
             switch (content) { //TODO implement the switch cases
                 case PRICE_IS:
+                    if (message.number() < getBuyPrice(message.what())) {
+                        buy(message.what());
+                        setBuyPrice(message.what(), message.number());
+                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
+                    } else {
+                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what()));
+                    }
                     break;
                 case ACCEPT_PRICE:
                     setSellPrice(message.what(), message.number());
                     sell();
                     break;
                 case REJECT_PRICE:
+                    sell(); // not really sell, but dropping the product
                     break;
                 default:
                     System.exit(1);
