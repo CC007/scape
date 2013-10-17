@@ -62,6 +62,8 @@ public class Producer extends Agent {
                 case ACCEPT_PRICE:
                     sell();
                     break;
+                case REJECT_PRICE:
+                    break;
                 default:
                     System.exit(1);
             }
