@@ -1,6 +1,7 @@
 package scape;
 
 import java.util.*;
+import scape.Message.Content;
 
 public class Trader extends Agent {
 
@@ -91,8 +92,19 @@ public class Trader extends Agent {
     // Vector.
     private void handleMessages() {
         for (Message message : messages) {
-            // if (message.content() == Messages.Content.PRICE_IS .......
-            /*YOU WILL HAVE TO IMPLEMENT THIS YOURSELF*/
+            Content content = message.content();
+            switch (content) { //TODO implement the switch cases
+                case PRICE_IS:
+                    break;
+                case ACCEPT_PRICE:
+                    setSellPrice(message.what(), message.number());
+                    sell();
+                    break;
+                case REJECT_PRICE:
+                    break;
+                default:
+                    System.exit(1);
+            }
         }
         messageWaiting = false;
         messages.clear();

@@ -1,5 +1,7 @@
 package scape;
 
+import scape.Message.Content;
+
 public class Producer extends Agent {
 
     private int stock;
@@ -37,7 +39,7 @@ public class Producer extends Agent {
     }
 
     // Evaluating the Producer's sellprice, called once per step, adjusting it based on the current stock.
-    // "upperS9tock)L(imit)" is set to 75, lowerS(tock)L(imit)" to 25.
+    // "upperS(tock)L(imit)" is set to 75, lowerS(tock)L(imit)" to 25.
     private void updateSellPrice() {
         if (stock > upperSL && sellPrice > 1) {
             sellPrice--;
@@ -50,13 +52,22 @@ public class Producer extends Agent {
     // Handling all messages received this step, then emptying the message Vector.
     private void handleMessages() {
         for (Message message : messages) {
-            if (message.content() == Message.Content.WHAT_IS_PRICE && getProduct().equals(message.what())) {
-                message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
+            Content content = message.content();
+            switch (content) {
+                case WHAT_IS_PRICE:
+                    if (getProduct().equals(message.what())) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
+                    }
+                    break;
+                case ACCEPT_PRICE:
+                    sell();
+                    break;
+                default:
+                    System.exit(1);
             }
-            /* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
+            messages.clear();
+            messageWaiting = false;
         }
-        messages.clear();
-        messageWaiting = false;
     }
 
     // Handling a sale, by decreasing stock and increasing the sellPrice.

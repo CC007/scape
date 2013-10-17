@@ -9,15 +9,10 @@ public class Message {
 
     public enum Content {
         //negotiation
-        WHAT_IS_PRICE,
-        PRICE_IS,
-        ACCEPT_PRICE,
-        REJECT_PRICE,
-        //actions
-        BUY_PRODUCT,
-        SELL_PRODUCT,
-        AGREE,
-        REFUSE
+        WHAT_IS_PRICE,  // cfp
+        PRICE_IS,       // propose
+        ACCEPT_PRICE,   // accept-proposal
+        REJECT_PRICE,   // reject-proposal
         
     }
     private Agent sender;

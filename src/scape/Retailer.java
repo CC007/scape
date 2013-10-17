@@ -50,24 +50,17 @@ public class Retailer extends Agent {
             Content content = message.content();
             switch (content) {
                 case PRICE_IS:
-                    if (message.number() < getPrice(message.sender().getProduct())) {
-                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.sender().getProduct()));
+                    if (message.number() < getPrice(message.what())) {
+                        buy(message.what());
+                        setPrice(message.what(), getPrice(message.what())-1);
+                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
                     } else {
-                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.sender().getProduct()));
-                    }
-                    break;
-                case SELL_PRODUCT:
-                    if (message.number() < getPrice(message.sender().getProduct())) {
-                        buy(message.sender().getProduct());
-                        message.sender().deliverMessage(new Message(this, Message.Content.AGREE, message.sender().getProduct()));
-                    } else {
-                        message.sender().deliverMessage(new Message(this, Message.Content.REFUSE, message.sender().getProduct()));
+                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what()));
                     }
                     break;
                 default:
                     System.exit(1);
             }
-            /* YOU WILL HAVE TO IMPLEMENT THIS YOURSELF */
         }
         messages.clear();
         messageWaiting = false;
