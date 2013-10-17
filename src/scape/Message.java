@@ -8,12 +8,11 @@ package scape;
 public class Message {
 
     public enum Content {
-        //negotiation
-        WHAT_IS_PRICE,  // cfp
+
+        WHAT_IS_PRICE,  // cfp (call for proposal)
         PRICE_IS,       // propose
         ACCEPT_PRICE,   // accept-proposal
         REJECT_PRICE,   // reject-proposal
-        
     }
     private Agent sender;
     private Content content;
