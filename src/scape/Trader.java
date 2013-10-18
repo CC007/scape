@@ -141,7 +141,7 @@ public class Trader extends Agent {
         Vector<Agent> agentsInRange = super.getAgentsInRange();
         if (checkCounter()) {
             for (Agent agent : agentsInRange) {
-                if (agent instanceof Producer && (agent.getProduct() == null ? getProduct() == null : agent.getProduct().equals(getProduct()))) {
+                if (agent instanceof Producer && (agent.getProduct() == null ? false : agent.getProduct().equals(getProduct()))) {
                     status = "negotiateBuy";
                 }
             }
