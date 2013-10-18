@@ -57,6 +57,7 @@ public class Retailer extends Agent {
                     break;
                 case ACCEPT_PRICE:
                     buy(message.what());
+                    printToOutput(message.what(), message.number());
                     break;
                 case REJECT_PRICE:
                     break;
@@ -214,5 +215,25 @@ public class Retailer extends Agent {
         if (product.equals("dairy")) {
             dairyStock = dairyStock + saleQuantity;
         }
+    }
+    
+    private void printToOutput(String product, int price){
+        System.out.print("sell;"+ product+";");
+        if (product.equals("fruit")) {
+            System.out.print(scape.avgFruitSellPrice);
+        }
+
+        if (product.equals("meat")) {
+            System.out.print(scape.avgMeatSellPrice);
+        }
+
+        if (product.equals("wine")) {
+            System.out.print(scape.avgWineSellPrice);
+        }
+
+        if (product.equals("dairy")) {
+            System.out.print(scape.avgDairySellPrice);
+        }
+        System.out.println(";"+ price);
     }
 }

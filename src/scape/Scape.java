@@ -214,9 +214,9 @@ public class Scape {
 
         updateStats();
 
-        for (int x = 0; x < 2; x++) {
+        /*for (int x = 0; x < 2; x++) {
             System.out.println("");
-        }
+        }*/
     }
 
     // Initializing various stats.

@@ -64,6 +64,7 @@ public class Producer extends Agent {
                     }
                     break;
                 case ACCEPT_PRICE:
+                    printToOutput(message.what(), message.number());
                     sell();
                     break;
                 case REJECT_PRICE:
@@ -90,5 +91,24 @@ public class Producer extends Agent {
     // Returns the Producer's sellPrice.
     public int getSellPrice() {
         return sellPrice;
+    }
+    private void printToOutput(String product, int price){
+        System.out.print("buy;"+ product+";");
+        if (product.equals("fruit")) {
+            System.out.print(scape.avgFruitBuyPrice);
+        }
+
+        if (product.equals("meat")) {
+            System.out.print(scape.avgMeatBuyPrice);
+        }
+
+        if (product.equals("wine")) {
+            System.out.print(scape.avgWineBuyPrice);
+        }
+
+        if (product.equals("dairy")) {
+            System.out.print(scape.avgDairyBuyPrice);
+        }
+        System.out.println(";"+ price);
     }
 }
