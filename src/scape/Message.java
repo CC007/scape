@@ -13,6 +13,7 @@ public class Message {
         PRICE_IS,       // propose
         ACCEPT_PRICE,   // accept-proposal
         REJECT_PRICE,   // reject-proposal
+        EMPTY_STOCK
     }
     private Agent sender;
     private Content content;

@@ -1,6 +1,9 @@
 package scape;
 
 import scape.Message.Content;
+import static scape.Message.Content.ACCEPT_PRICE;
+import static scape.Message.Content.REJECT_PRICE;
+import static scape.Message.Content.WHAT_IS_PRICE;
 
 public class Retailer extends Agent {
 
@@ -16,7 +19,7 @@ public class Retailer extends Agent {
     private int dairyPrice;
     // Sale variables
     private int saleQuantity = 20;
-    private int stockDecrease = 5;
+    private int stockDecrease = 1;
     private int upperSL = 75;
     private int lowerSL = 25;
 
@@ -49,14 +52,15 @@ public class Retailer extends Agent {
         for (Message message : messages) {
             Content content = message.content();
             switch (content) {
-                case PRICE_IS:
-                    if (message.number() < getPrice(message.what())) {
-                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
-                        buy(message.what());
-                        setPrice(message.what(), getPrice(message.what())-1);
-                    } else {
-                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what()));
+                case WHAT_IS_PRICE:
+                    if (getProduct().equals(message.what())) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, message.what(), getPrice(message.what())));
                     }
+                    break;
+                case ACCEPT_PRICE:
+                    buy(message.what());
+                    break;
+                case REJECT_PRICE:
                     break;
                 default:
                     System.exit(1);

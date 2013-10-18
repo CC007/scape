@@ -18,6 +18,7 @@ public class Trader extends Agent {
     private String status;
     // A random number generator.
     static Random gen = new Random();
+    private int counter;
 
     // Trader Constructor
     public Trader(Scape controller) {
@@ -37,9 +38,6 @@ public class Trader extends Agent {
     // The Trader's act function, called once per step, handling all the
     // Trader's behavior.
     public void act() {
-        if (messageWaiting) {
-            handleMessages();
-        }
         if (status.equals("chooseProduct")) {
             chooseProduct();
         }
@@ -61,6 +59,10 @@ public class Trader extends Agent {
         if (status.equals("sellToRetailer")) {
             sell();
         }
+        if (messageWaiting) {
+            handleMessages();
+        }
+        checkCounter();
     }
 
     // Choosing a product to start trading in, by evaluating the expected
@@ -82,7 +84,7 @@ public class Trader extends Agent {
                 profit = priceEstimates[i];
             }
         }
-
+        counter = 0;
         String product = getProduct(productNr);
         status = "moveToProducer";
         this.setProduct(product);
@@ -95,20 +97,33 @@ public class Trader extends Agent {
             Content content = message.content();
             switch (content) { //TODO implement the switch cases
                 case PRICE_IS:
-                    if (message.number() < getBuyPrice(message.what())) {
-                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
-                        buy(message.what());
-                        setBuyPrice(message.what(), message.number());
-                    } else {
-                        message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what()));
+                    if (message.sender() instanceof Producer) {
+                        if (message.number() <= getBuyPrice(message.what())) {
+                            message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what(), message.number()));
+                            setBuyPrice(message.what(), message.number());
+                            status = "buyFromProducer";
+                        } else {
+                            message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what(), message.number()));
+                            setBuyPrice(message.what(), message.number());
+                            this.setProduct("none");
+                            status = "chooseProduct";
+                        }
+                    } else if (message.sender() instanceof Retailer) {
+                        if (message.number() >= getSellPrice(message.what())) {
+                            message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what(), message.number()));
+                            setSellPrice(message.what(), message.number());
+                            status = "sellToRetailer";
+                        } else {
+                            message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what(), message.number()));
+                            setSellPrice(message.what(), message.number());
+                            this.setProduct("none");
+                            status = "chooseProduct";
+                        }
                     }
                     break;
-                case ACCEPT_PRICE:
-                    sell();
-                    setSellPrice(message.what(), message.number());
-                    break;
-                case REJECT_PRICE:
-                    sell(); // not really sell, but dropping the product
+                case EMPTY_STOCK:
+                    this.setProduct("none");
+                    status = "moveToRetailer";
                     break;
                 default:
                     System.exit(1);
@@ -150,24 +165,27 @@ public class Trader extends Agent {
         for (Agent agent : getAgentsInRange()) {
             if (agent instanceof Producer) {
                 agent.deliverMessage(new Message(this, Message.Content.WHAT_IS_PRICE, getProduct()));
-                status = "buyFromProducer";
             }
         }
     }
 
     // Negotiating a sale to a Retailer.
     private void negotiateSale() {
-        for (Agent agent : getAgentsInRange()) {
-            if (agent instanceof Retailer) {
-                agent.deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), getSellPrice(getProduct())));
-                status = "sellToRetailer";
+        if (getProduct().equals("none")) {
+            status = "chooseProduct";
+        } else {
+            for (Agent agent : getAgentsInRange()) {
+                if (agent instanceof Retailer) {
+                    agent.deliverMessage(new Message(this, Message.Content.WHAT_IS_PRICE, getProduct()));
+                    status = "sellToRetailer";
+                }
             }
         }
     }
-
-    // Buying a product from a Producer.
+// Buying a product from a Producer.
     private void buy(String product) {
         this.setProduct(product);
+        counter = 0;
         status = "moveToRetailer";
     }
 
@@ -301,5 +319,19 @@ public class Trader extends Agent {
     // agents, and should not be called by them.
     public String getState() {
         return status;
+    }
+
+    private void checkCounter() {
+        if (counter > 50) {
+            if (getState().equals("moveToProducer")) {
+                setProduct("none");
+                status = "moveToRetailer";
+                counter = 25;
+            } else {
+                setProduct("none");
+                status = "chooseProduct";
+            }
+        }
+        counter++;
     }
 }

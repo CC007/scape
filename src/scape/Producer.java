@@ -7,7 +7,7 @@ public class Producer extends Agent {
     private int stock;
     private int sellPrice;
     // Sale Variables
-    private int production = 10;
+    private int production = 2;
     private int saleQuantity = 20;
     private int upperSL = 75;
     private int lowerSL = 25;
@@ -56,7 +56,11 @@ public class Producer extends Agent {
             switch (content) {
                 case WHAT_IS_PRICE:
                     if (getProduct().equals(message.what())) {
-                        message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
+                        if (stock > 3*saleQuantity) {
+                            message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
+                        } else {
+                            message.sender().deliverMessage(new Message(this, Message.Content.EMPTY_STOCK, getProduct()));
+                        }
                     }
                     break;
                 case ACCEPT_PRICE:
