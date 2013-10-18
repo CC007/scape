@@ -4,6 +4,7 @@ import scape.Message.Content;
 
 public class Producer extends Agent {
 
+    private int epoch;
     private int stock;
     private int sellPrice;
     // Sale Variables
@@ -15,6 +16,7 @@ public class Producer extends Agent {
     // The Producer Constructor
     public Producer(Scape controller, String food) {
         super(controller, "producer");
+        this.epoch = 0;
         this.setProduct(food);
         stock = 100;
         sellPrice = 50;
@@ -22,6 +24,7 @@ public class Producer extends Agent {
 
     // The Producer's act function, called once per step, handling all the Producer's behavior.
     public void act() {
+        epoch++;
         increaseStocks();
         updateSellPrice();
         if (messageWaiting) {
@@ -56,7 +59,7 @@ public class Producer extends Agent {
             switch (content) {
                 case WHAT_IS_PRICE:
                     if (getProduct().equals(message.what())) {
-                        if (stock > 3*saleQuantity) {
+                        if (stock > 3 * saleQuantity) {
                             message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, getProduct(), sellPrice));
                         } else {
                             message.sender().deliverMessage(new Message(this, Message.Content.EMPTY_STOCK, getProduct()));
@@ -92,23 +95,24 @@ public class Producer extends Agent {
     public int getSellPrice() {
         return sellPrice;
     }
-    private void printToOutput(String product, int price){
-        System.out.print("buy;"+ product+";");
-        if (product.equals("fruit")) {
-            System.out.print(scape.avgFruitBuyPrice);
-        }
 
-        if (product.equals("meat")) {
-            System.out.print(scape.avgMeatBuyPrice);
-        }
+    private void printToOutput(String product, int price) {
+        System.out.print(epoch + ";buy;" + product);
+        /*if (product.equals("fruit")) {
+         System.out.print(";" + scape.avgFruitBuyPrice);
+         }
 
-        if (product.equals("wine")) {
-            System.out.print(scape.avgWineBuyPrice);
-        }
+         if (product.equals("meat")) {
+         System.out.print(";" + scape.avgMeatBuyPrice);
+         }
 
-        if (product.equals("dairy")) {
-            System.out.print(scape.avgDairyBuyPrice);
-        }
-        System.out.println(";"+ price);
+         if (product.equals("wine")) {
+         System.out.print(";" + scape.avgWineBuyPrice);
+         }
+
+         if (product.equals("dairy")) {
+         System.out.print(";" + scape.avgDairyBuyPrice);
+         }*/
+        System.out.println(";" + price);
     }
 }

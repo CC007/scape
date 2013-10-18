@@ -7,6 +7,7 @@ import static scape.Message.Content.WHAT_IS_PRICE;
 
 public class Retailer extends Agent {
 
+    private int epoch;
     // Stock variables
     private int fruitStock;
     private int meatStock;
@@ -40,6 +41,7 @@ public class Retailer extends Agent {
 
     // The Retailer's act function, called once per step, handling all the Retailer's behavior.
     public void act() {
+        epoch++;
         decreaseStocks();
         updatePrices();
         if (messageWaiting) {
@@ -216,24 +218,24 @@ public class Retailer extends Agent {
             dairyStock = dairyStock + saleQuantity;
         }
     }
-    
-    private void printToOutput(String product, int price){
-        System.out.print("sell;"+ product+";");
-        if (product.equals("fruit")) {
-            System.out.print(scape.avgFruitSellPrice);
-        }
 
-        if (product.equals("meat")) {
-            System.out.print(scape.avgMeatSellPrice);
-        }
+    private void printToOutput(String product, int price) {
+        System.out.print(epoch + ";sell;" + product);
+        /*if (product.equals("fruit")) {
+         System.out.print(";" + scape.avgFruitSellPrice);
+         }
 
-        if (product.equals("wine")) {
-            System.out.print(scape.avgWineSellPrice);
-        }
+         if (product.equals("meat")) {
+         System.out.print(";" + scape.avgMeatSellPrice);
+         }
 
-        if (product.equals("dairy")) {
-            System.out.print(scape.avgDairySellPrice);
-        }
-        System.out.println(";"+ price);
+         if (product.equals("wine")) {
+         System.out.print(";" + scape.avgWineSellPrice);
+         }
+
+         if (product.equals("dairy")) {
+         System.out.print(";" + scape.avgDairySellPrice);
+         }*/
+        System.out.println(";" + price);
     }
 }
