@@ -51,9 +51,9 @@ public class Retailer extends Agent {
             switch (content) {
                 case PRICE_IS:
                     if (message.number() < getPrice(message.what())) {
+                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
                         buy(message.what());
                         setPrice(message.what(), getPrice(message.what())-1);
-                        message.sender().deliverMessage(new Message(this, Message.Content.ACCEPT_PRICE, message.what()));
                     } else {
                         message.sender().deliverMessage(new Message(this, Message.Content.REJECT_PRICE, message.what()));
                     }
