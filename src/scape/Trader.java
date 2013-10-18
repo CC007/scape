@@ -37,7 +37,11 @@ public class Trader extends Agent {
 
     // The Trader's act function, called once per step, handling all the
     // Trader's behavior.
+    @Override
     public void act() {
+        if (messageWaiting) {
+            handleMessages();
+        }
         if (status.equals("chooseProduct")) {
             chooseProduct();
         }
@@ -59,10 +63,6 @@ public class Trader extends Agent {
         if (status.equals("sellToRetailer")) {
             sell();
         }
-        if (messageWaiting) {
-            handleMessages();
-        }
-        checkCounter();
     }
 
     // Choosing a product to start trading in, by evaluating the expected
@@ -139,11 +139,16 @@ public class Trader extends Agent {
     private void moveToProducer() {
         super.moveToGoal(findXLocProduct(this.getProduct()), findYLocProduct(this.getProduct()));
         Vector<Agent> agentsInRange = super.getAgentsInRange();
-
-        for (Agent agent : agentsInRange) {
-            if (agent instanceof Producer && agent.getProduct() == getProduct()) {
-                status = "negotiateBuy";
+        if (checkCounter()) {
+            for (Agent agent : agentsInRange) {
+                if (agent instanceof Producer && (agent.getProduct() == null ? getProduct() == null : agent.getProduct().equals(getProduct()))) {
+                    status = "negotiateBuy";
+                }
             }
+        } else {
+            setProduct("none");
+            status = "moveToRetailer";
+            counter = 25;
         }
     }
 
@@ -152,11 +157,15 @@ public class Trader extends Agent {
     private void moveToRetailer() {
         super.moveToGoal((int) Math.ceil(scape.xSize / 2), (int) Math.ceil(scape.ySize / 2));
         Vector<Agent> agentsInRange = super.getAgentsInRange();
-
-        for (Agent agent : agentsInRange) {
-            if (agent instanceof Retailer) {
-                status = "negotiateSale";
+        if (checkCounter()) {
+            for (Agent agent : agentsInRange) {
+                if (agent instanceof Retailer) {
+                    status = "negotiateSale";
+                }
             }
+        } else {
+            setProduct("none");
+            status = "chooseProduct";
         }
     }
 
@@ -177,12 +186,12 @@ public class Trader extends Agent {
             for (Agent agent : getAgentsInRange()) {
                 if (agent instanceof Retailer) {
                     agent.deliverMessage(new Message(this, Message.Content.WHAT_IS_PRICE, getProduct()));
-                    status = "sellToRetailer";
                 }
             }
         }
     }
-// Buying a product from a Producer.
+
+    // Buying a product from a Producer.
     private void buy(String product) {
         this.setProduct(product);
         counter = 0;
@@ -321,17 +330,11 @@ public class Trader extends Agent {
         return status;
     }
 
-    private void checkCounter() {
+    private boolean checkCounter() {
         if (counter > 50) {
-            if (getState().equals("moveToProducer")) {
-                setProduct("none");
-                status = "moveToRetailer";
-                counter = 25;
-            } else {
-                setProduct("none");
-                status = "chooseProduct";
-            }
+            return false;
         }
         counter++;
+        return true;
     }
 }
