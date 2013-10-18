@@ -53,9 +53,7 @@ public class Retailer extends Agent {
             Content content = message.content();
             switch (content) {
                 case WHAT_IS_PRICE:
-                    if (getProduct().equals(message.what())) {
-                        message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, message.what(), getPrice(message.what())));
-                    }
+                    message.sender().deliverMessage(new Message(this, Message.Content.PRICE_IS, message.what(), getPrice(message.what())));
                     break;
                 case ACCEPT_PRICE:
                     buy(message.what());
